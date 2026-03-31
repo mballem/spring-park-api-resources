@@ -1,2 +1,1795 @@
-# spring-park-api-resources
-Este repositório contém os recursos necessários para acompanhar o curso de Desenvolvimento de um Cliente REST com Spring Boot. Aqui você encontrará o executável da API, documentação dos recursos e instruções de configuração.
+= Spring Park API - Recursos do Curso
+Marcio Ballem <https://www.linkedin.com/in/mballem/[LinkedIn] | https://github.com/mballem[GitHub] | https://www.udemy.com/user/marcio-ballem-de-souza/[Udemy]>
+:toc: macro
+:toc-title: Sumário
+:toclevels: 3
+:sectnums:
+:doctype: book
+:source-highlighter: highlightjs
+:icons: font
+
+image:https://img.shields.io/badge/Java-25-orange?style=for-the-badge&logo=openjdk[Java 25]
+image:https://img.shields.io/badge/Spring_Boot-4.0.3-brightgreen?style=for-the-badge&logo=springboot[Spring Boot]
+
+<<<
+[quote]
+____
+API para gestão de estacionamento de veículos, desenvolvida para o ecossistema Java com Spring Boot para âmbito educacional.
+____
+<<<
+
+== 🎯 Sobre o Projeto
+Este repositório contém os recursos necessários para acompanhar o curso de Desenvolvimento de um *_Client REST_* com Spring Boot 4. 
+
+Aqui você encontrará o executável da API, documentação dos recursos e instruções de configuração.
+
+<<<
+
+== 🚀 Como Começar
+
+=== Pré-requisitos e Execução da API
+
+Para que a aplicação cliente desenvolvida no curso funcione corretamente, é necessário que a API fornecida (demo-park-api-x.x.jar) esteja em execução.
+
+=== 1. Verificação do Ambiente (Java 25+)
+Certifique-se de que você possui o JRE (Java Runtime Environment) ou JDK na versão `25+` instalada. Para verificar, abra o seu terminal (CMD, PowerShell ou Bash) e digite:
+
+[source,bash]
+----
+java -version
+----
+O terminal deve retornar algo semelhante a:
+----
+openjdk version "25" 2025-09-16
+----
+
+[IMPORTANT]
+Caso a versão exibida seja inferior a `25`, o arquivo `.jar` não será executado. Certifique-se de atualizar seu ambiente antes de prosseguir.
+
+=== 2. Como Executar a API
+
+-- Faça o download do arquivo `spring-park-api-x.x.jar` em:
+
+[icon:download[]] **https://github.com/mballem/spring-park-api-resources/releases/tag/v1.0[Baixar API (v1.0)^]**
+
+Com o terminal aberto, na pasta onde você salvou o arquivo da `.jar`, execute o seguinte comando:
+[source,bash]
+----
+java -jar demo-park-api-x.x.jar
+----
+
+[%unbreakable]
+.Status de Inicialização
+Após o comando, você verá o _log_ do Spring Boot no terminal. A API estará pronta para uso quando entre as última(s) linha(s) tiver:
+[source,text]
+----
+.. : Tomcat started on port 8080 (http) with context path '/'
+.. : Started DemoParkApiApplication in X.XXX seconds (process running for X.X)
+----
+==== Informações de Acesso Local
+
+Uma vez em execução, a API e sua documentação interativa estarão disponíveis nos endereços abaixo:
+
+- URL Base da API: `http://localhost:8080`
+
+- Swagger UI (Documentação): `http://localhost:8080/swagger-ui.html`
+
+- Banco de Dados (H2 Console): `http://localhost:8080/h2-console`
+
+== 🔐 Credenciais de Teste
+
+Para facilitar o desenvolvimento da aplicação cliente, o arquivo executável (`.jar`) já inicializa um banco de dados com usuários pré-cadastrados. Utilize as credenciais abaixo para testar os diferentes níveis de acesso (Roles).
+
+=== Usuários de Acesso
+Estes usuários permitem a autenticação no endpoint `/api/v1/auth` para obtenção do token JWT.
+
+[cols="2,2,1,2", options="header"]
+|===
+| Perfil (Role) | Username (e-mail) | Password | Observação
+
+| **ADMIN**
+| `admin@email.com`
+| `123456`
+| Acesso total a todos os recursos.
+
+| **CLIENTE**
+| `bruna@email.com`
+| `123456`
+| Acesso restrito aos seus próprios dados.
+|===
+
+=== Dados de Cliente (Pré-vinculados)
+O usuário `bruna@email.com` já possui um registro de cliente vinculado. Ao logar com este usuário, você poderá consultar os seguintes dados:
+
+[%unbreakable]
+====
+.Dados do Perfil Cliente
+[source,json,linenums]
+----
+{
+  "nome": "Bruna Maria Melo",
+  "cpf": "45200458005",
+  "usuario": "bruna@email.com"
+}
+----
+====
+
+[IMPORTANT]
+====
+O sistema não permite que um usuário com perfil **ADMIN** cadastre dados de cliente (Nome/CPF) para si mesmo. Para testar o fluxo de "Cadastro de Cliente", você deve criar um **novo usuário** ou usar um usuário.
+====
+
+== Segurança
+
+A API utiliza **JSON Web Token (JWT)** para proteger os recursos.
+
+* **Header:** `Authorization: Bearer <token>`
+* **Esquema:** Bearer JWT
+
+TIP: Decoded Payload
+[%unbreakable]
+[source,json]
+----
+{
+  "sub": "admin@email.com", <1>
+  "iat": 1774632494, <2>
+  "exp": 1774636094, <3>
+  "id": 16, <4>
+  "role": "ADMIN" <5>
+}
+----
+<1> `username` do usuário
+<2> data de criação do token
+<3> data de expiração do token
+<4> `id` do usuário
+<5> perfil do usuário
+
+<<<
+
+== Autenticação
+
+Recurso para proceder com a autenticação na API mediante *username* e *password*.
+
+=== Login (Autenticação)
+`POST /api/v1/auth`
+
+==== Request
+
+Request Body:: _Required_
+
+[%unbreakable]
+[source,json]
+----
+{
+  "username": "user@email.com",
+  "password": "123456"
+}
+----
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+----
+
+Code 400:: Credenciais inválidas
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 422:: Credenciais inválidas
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string",
+  "errors": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  }
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+== Usuários
+
+Contém todas as operações relativas aos recursos para cadastro, edição e leitura de um usuário.
+
+=== Criar Usuário
+`POST /api/v1/usuarios`
+
+==== Request
+
+Request Body:: _Required_
+
+[%unbreakable]
+[source,json]
+----
+{
+  "username": "joao@email.com",
+  "password": "123456"
+}
+----
+
+==== Responses
+
+Code 201:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "id": 0,
+  "username": "string",
+  "role": "string"
+}
+----
+
+Code 409:: Usuário (e-mail) já cadastrado no sistema
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 422:: Recurso não processado por dados de entrada inválidos
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string",
+  "errors": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  }
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Listar todos os usuários cadastrados
+`GET /api/v1/usuarios`
+
+NOTE: Acesso Restrito a `ADMIN`
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+[
+  {
+    "id": 0,
+    "username": "string",
+    "role": "string"
+  }
+]
+----
+
+Code 403:: Sem permissão para acessar este recurso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Buscar usuário por ID
+`GET /api/v1/usuarios/{id}`
+
+NOTE: Acesso Restrito a `ADMIN` e `CLIENTE`
+
+- `CLIENTE` tem acesso *apenas* ao seu próprio cadastro
+- `ADMIN` tem acesso a qualquer cadastro
+
+==== Parameters
+
+Path Param:: `{id}` is required
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "id": 1,
+  "username": "joao@email.com",
+  "role": "ROLE_CLIENTE"
+}
+----
+
+Code 403:: Sem permissão para acessar este recurso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 404:: Recurso não encontrado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Alterar a senha do cadastro
+`GET /api/v1/usuarios/{id}`
+
+NOTE: Acesso Restrito a `ADMIN` e `CLIENTE`
+
+- Apenas o próprio usuário pode alterar sua senha.
+
+==== Parameters
+
+Path Param:: `{id}` is required
+
+==== Request
+
+Request Body:: _Required_
+
+[%unbreakable]
+[source,json]
+----
+{
+  "senhaAtual": "string",
+  "novaSenha": "string",
+  "confirmaSenha": "string"
+}
+----
+
+==== Responses
+
+Code 204:: Senha alterada com sucesso
+
+Code 400:: Senha atual não confere
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 403:: Sem permissão para acessar este recurso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 422:: Campos inválidos ou mal formatados
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string",
+  "errors": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  }
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+== Clientes
+
+Cadastro de dados pessoais vinculados ao usuário já cadastrado.
+
+=== Criar Cliente
+`POST /api/v1/clientes`
+
+NOTE: Acesso restrito ao perfil `CLIENTE`
+
+==== Request
+
+Request Body:: Required
+
+[%unbreakable]
+[source,json]
+----
+{
+  "nome": "João da Silva",
+  "cpf": "12345678901"
+}
+----
+
+==== Responses
+
+Code 201:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "id": 0,
+  "nome": "string",
+  "cpf": "string"
+}
+----
+
+Code 403:: Acesso negado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 409:: CPF já cadastrado no sistema
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 422:: Campos inválidos ou mal formatados
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string",
+  "errors": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  }
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Listar Clientes
+`GET /api/v1/clientes`
+
+NOTE: Acesso restrito ao perfil `ADMIN`
+
+==== Parameters
+
+Paginação:: _Query Params_
+
+`?page=0&size=5&sort=nome,asc`
+
+|===
+|Name |Type |Default Value |Required |Description
+
+|page
+|integer
+|0
+|false
+|Representa a página retornada (0 igual a página 1)
+
+|size
+|integer
+|5
+|false
+|Representa o total de elementos por página
+
+|sort
+|array<string>
+|nome,asc
+|false
+|Representa a ordenação dos resultados. Aceita múltiplos critérios de ordenação.
+|===
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "content": [
+    { "id": 1, "nome": "João da Silva", "cpf": "12345678901" }
+  ],
+  "totalElements": 1,
+  "totalPages": 1,
+  "size": 5,
+  "number": 0
+}
+----
+
+Code 403:: Acesso Negado
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Buscar Cliente por ID
+`GET /api/v1/clientes/{id}`
+
+NOTE: Acesso restrito a `ADMIN`
+
+==== Parameters
+
+Path Param:: `{id}` is required
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "id": 0,
+  "nome": "string",
+  "cpf": "string"
+}
+----
+
+Code 403:: Acesso Negado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 404:: Cliente não encontrado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string",
+  "errors": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  }
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Buscar detalhes do cliente
+`GET /api/v1/clientes/detalhes`
+
+NOTE: Acesso restrito a `CLIENTE`
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "id": 0,
+  "nome": "string",
+  "cpf": "string"
+}
+----
+
+Code 403:: Acesso Negado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+== Vagas
+
+Gestão das vagas físicas do estacionamento.
+
+=== Criar Vaga
+`POST /api/v1/vagas`
+
+NOTE: Acesso restrito a `ADMIN`
+
+- Tipos de vagas `LIVRE` e `OCUPADA`
+- Formato do código da vaga `X-00`
+
+==== Request
+
+Request Body:: _Required_
+
+[%unbreakable]
+[source,json]
+----
+{
+  "codigo": "A-01",
+  "status": "LIVRE"
+}
+----
+
+==== Reponses
+
+Code 201:: Sucesso
+
+Code 403:: Acesso Negado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 409:: Vaga já cadastrada
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 422:: Campos inválidos ou mal formatados
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string",
+  "errors": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  }
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Localizar Vaga
+`GET /api/v1/vagas/{codigo}`
+
+NOTE: Acesso restrito a `ADMIN`
+
+Recurso para retornar uma vaga pelo código
+
+==== Parameters
+
+Path Param:: `{codigo}` is required
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "id": 0,
+  "codigo": "string",
+  "status": "string"
+}
+----
+
+Code 403:: Acesso Negado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 404:: Vaga não encontrada
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+== Estacionamentos (Check-in/Check-out)
+
+Operações para registrar, a entrada (_check-in_) e saída (_check-out_), listar e gerar relatório em PDF de estacionamentos.
+
+=== Operação de Check-in
+`POST /api/v1/estacionamentos/check-in`
+
+NOTE: Acesso restrito a `ADMIN`
+
+==== Request
+
+Request Body:: _Required_
+
+[%unbreakable]
+[source,json]
+----
+{
+  "placa": "ABC-1234",
+  "marca": "Fiat",
+  "modelo": "Palio",
+  "cor": "Preto",
+  "clienteCpf": "12345678901"
+}
+----
+
+==== Responses
+
+Code 201:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "placa": "string",
+  "marca": "string",
+  "modelo": "string",
+  "cor": "string",
+  "clienteCpf": "string",
+  "recibo": "string",
+  "dataEntrada": "2026-03-27T19:50:36.068Z",
+  "dataSaida": "2026-03-27T19:50:36.068Z",
+  "vagaCodigo": "string",
+  "valor": 0,
+  "desconto": 0
+}
+----
+
+Code 201:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "placa": "string",
+  "marca": "string",
+  "modelo": "string",
+  "cor": "string",
+  "clienteCpf": "string",
+  "recibo": "string",
+  "dataEntrada": "2026-03-27T19:50:36.068Z",
+  "dataSaida": "2026-03-27T19:50:36.068Z",
+  "vagaCodigo": "string",
+  "valor": 0,
+  "desconto": 0
+}
+----
+
+Code 403:: Acesso Negado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 404:: Causas possíveis:
+
+- CPF do cliente não cadastrado no sistema;
+- Nenhuma vaga livre foi localizada;
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 422:: Campos inválidos ou mal formatados
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string",
+  "errors": {
+    "additionalProp1": "string",
+    "additionalProp2": "string",
+    "additionalProp3": "string"
+  }
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Operação de Check-out
+`PUT /api/v1/estacionamentos/check-out/{recibo}`
+
+NOTE: Acesso restrito a `ADMIN`
+
+Recurso para dar saída de um veículo do estacionamento.
+
+==== Parameters
+
+Path Param:: `{recibo}` is required
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "placa": "ABC-1234",
+  "marca": "Fiat",
+  "modelo": "Palio",
+  "cor": "Preto",
+  "clienteCpf": "12345678901",
+  "recibo": "20260314-115700",
+  "dataEntrada": "2026-03-14T10:00:00",
+  "dataSaida": "2026-03-14T11:00:00",
+  "vagaCodigo": "A-01",
+  "valor": 10.00,
+  "desconto": 0.00
+}
+----
+
+Code 403:: Acesso Negado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 404:: Causas possíveis:
+
+- Número do recibo é inexistente
+- O veículo já teve o check-out registrado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Listar os registros de estacionamentos do cliente
+`GET /api/v1/estacionamentos`
+
+NOTE: Acesso restrito a `CLIENTE`
+
+==== Parameters
+
+Paginação:: _Query Params_
+
+`?page=0&size=5&sort=nome,asc`
+
+|===
+|Name |Type |Default Value |Required |Description
+
+|page
+|integer
+|0
+|false
+|Representa a página retornada (0 igual a página 1)
+
+|size
+|integer
+|5
+|false
+|Representa o total de elementos por página
+
+|sort
+|array<string>
+|dataEntrada,asc
+|false
+|Representa a ordenação dos resultados. Aceita múltiplos critérios de ordenação.
+|===
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "content": [
+    {
+      "recibo": "string",
+      "dataEntrada": "2026-03-27T19:58:27.495Z",
+      "modelo": "string",
+      "placa": "string",
+      "marca": "string",
+      "valor": 0.00,
+      "cor": "string",
+      "desconto": 0.00,
+      "dataSaida": "2026-03-27T19:58:27.495Z",
+      "clienteCpf": "string",
+      "vagaCodigo": "string"
+    }
+  ],
+  "first": true,
+  "last": true,
+  "size": 0,
+  "totalPages": 0,
+  "totalElements": 0,
+  "page": 0,
+  "pageElements": 0
+}
+----
+
+Code 403:: Acesso Negado
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Listar os registros de estacionamentos do cliente
+`GET /api/v1/estacionamentos/relatorio`
+
+NOTE: Acesso restrito a `CLIENTE`
+
+Emitir um relatório em PDF com os estacionamentos do cliente.
+
+==== Responses
+
+Code 200:: Sucesso
+
+*_Media type_*: `application/pdf`
+
+Code 403:: Acesso Negado
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Localizar check-in por CPF
+`GET /api/v1/estacionamentos/cpf/{cpf}`
+
+NOTE: Acesso restrito a `ADMIN`
+
+==== Parameters
+
+Path Param:: `{cpf}` is required
+
+Query Params::
+
+`?page=0&size=5&sort=nome,asc`
+
+|===
+|Name |Type |Default Value |Required |Description
+
+|page
+|integer
+|0
+|false
+|Representa a página retornada (0 igual a página 1)
+
+|size
+|integer
+|5
+|false
+|Representa o total de elementos por página
+
+|sort
+|array<string>
+|nome,asc
+|false
+|Representa a ordenação dos resultados. Aceita múltiplos critérios de ordenação.
+|===
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "content": [
+    {
+      "desconto": 0,
+      "dataSaida": "2026-03-27T20:10:01.028Z",
+      "dataEntrada": "2026-03-27T20:10:01.028Z",
+      "marca": "string",
+      "placa": "string",
+      "modelo": "string",
+      "cor": "string",
+      "valor": 0,
+      "recibo": "string",
+      "clienteCpf": "string",
+      "vagaCodigo": "string"
+    }
+  ],
+  "first": true,
+  "last": true,
+  "size": 0,
+  "totalPages": 0,
+  "totalElements": 0,
+  "page": 0,
+  "pageElements": 0
+}
+----
+
+Code 403:: Acesso Negado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+=== Localizar check-in por CPF
+`GET /api/v1/estacionamentos/check-in/{recibo}`
+
+NOTE: Acesso restrito a `ADMIN` e `CLIENTE`
+
+Recurso para retornar um veículo estacionado pelo nº do recibo.
+
+- `ADMIN` tem acesso a todos os recibos
+- `CLIENTE` com acesso restrito a seus recibos
+
+==== Parameters
+
+Path Param:: `{recibo}` is required
+
+==== Responses
+
+Code 200:: Sucesso
+
+[%unbreakable]
+[source,json]
+----
+{
+  "placa": "string",
+  "marca": "string",
+  "modelo": "string",
+  "cor": "string",
+  "clienteCpf": "string",
+  "recibo": "string",
+  "dataEntrada": "2026-03-27T20:16:38.758Z",
+  "dataSaida": "2026-03-27T20:16:38.758Z",
+  "vagaCodigo": "string",
+  "valor": 0,
+  "desconto": 0
+}
+----
+
+Code 404:: Número do recibo não encontrado.
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 500:: Internal Server Error
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+== Schemas - Modelo de dados
+
+Este capítulo explica os principais componentes de requisição e resposta na API, mostrando exemplos e como interpretá-los.
+
+=== Objetos
+
+==== JwtToken
+
+Objeto de requisição
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." <1>
+}
+----
+<1> *token*: Token JWT gerado a partir da autenticação e que deve ser enviado nas demais requisições via cabeçalho `Authorization`.
+
+==== EstacionamentoResponseDto
+
+Objeto de resposta.
+
+[%unbreakable]
+====
+[source,json,linenums]
+----
+{
+    "placa" : "ABC-8080",
+    "marca" : "HONDA",
+    "modelo" : "FIT XLX",
+    "cor" : "AMARELO",
+    "clienteCpf" : "11111111111",
+    "recibo" : "00000000-999999",
+    "dataEntrada" : "2023-10-15 12:30:00",
+    "dataSaida" : "2023-10-15 14:00:00",
+    "vagaCodigo" : "X-99",
+    "valor" : 0.00, <1>
+    "desconto" : 0.00 <2>
+}
+----
+<1> Valor sem desconto
+<2> Valor do desconto
+
+Para obter o valor a pagar calcule: `valor - desconto`
+====
+
+==== EstacionamentoCreateDto
+
+Objeto de requisição.
+
+[%unbreakable]
+====
+[source,json,linenums]
+----
+{
+  "placa": "ABC-1234", <1>
+  "marca": "Fiat",
+  "modelo": "Palio",
+  "cor": "Preto",
+  "clienteCpf": "12345678901" <2>
+}
+----
+<1> **Placa:** Deve seguir obrigatoriamente o padrão de 3 letras, hífen e 4 números.
+<2> **CPF:** Deve conter exatamente 11 dígitos numéricos. O sistema validará se este cliente já existe na base.
+====
+
+==== ErrorMessage
+
+Objeto de resposta (usado em exceções, erros e validações de campos)
+
+[%unbreakable]
+====
+[source,json,linenums]
+----
+{
+  "path": "/api/v1/usuarios",
+  "method": "POST",
+  "status": 422,
+  "statusText": "Unprocessable Entity",
+  "message": "Dados inválidos", <1>
+  "errors": { <2>
+    "username": "formato de e-mail inválido",
+    "password": "deve ter exatamente 6 caracteres"
+  }
+}
+----
+<1> **message:** Descrição genérica do problema encontrado.
+<2> **errors:** Este objeto é dinâmico. Cada chave dentro dele corresponde ao nome do campo que falhou na validação do campo.
+====
+
+==== VagaCreateDto
+
+Objeto de requisição
+
+====
+[source,json,linenums]
+----
+{
+  "codigo": "A-01", <1>
+  "status": "LIVRE" <2>
+}
+----
+<1> **codigo:** Deve ter exatamente 4 caracteres. Composto por uma letra, hífen e dois números.
+<2> **status:** Aceita apenas os valores literais `LIVRE` ou `OCUPADA`. O sistema rejeitará qualquer outro texto.
+====
+
+==== VagaResponseDto
+
+Objeto de resposta
+
+[%unbreakable]
+====
+[source,json,linenums]
+----
+{
+"id": 1,
+"codigo": "A-01",
+"status": "LIVRE" <1>
+}
+----
+<1> **status:**
+
+- `LIVRE` indica que a vaga está disponível.
+- `OCUPADA` indica que a vaga está indisponível.
+====
+
+==== UsuarioResponseDto
+
+Objeto de resposta
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+    "id": 1, <1>
+    "username": "admin@email.com", <2>
+    "role": "ADMIN" <3>
+}
+----
+<1> *id*: O identificador numérico (`Long`) único para este usuário.
+<2> *username*: O endereço de e-mail que o usuário utiliza para login.
+<3> *role*: Define o nível de permissão dentro do sistema, controlando o acesso aos endpoints protegidos (`ADMIN`; `CLIENTE`).
+
+==== UsuarioCreateDto
+
+Objeto de requisição
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+    "username": "joao@email.com", <1>
+    "password": "123456" <2>
+}
+----
+<1> *username*: Deve estar em um formato de e-mail válido (ex: nome@dominio.com).
+<2> *password*: O sistema exige que a senha tenha exatamente 6 caracteres para ser processada.
+
+==== UsuarioLoginDto
+
+Objeto de requisição
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+    "username": "usuario@email.com", <1>
+    "password": "123456" <2>
+}
+----
+<1> *username*: Deve ser um e-mail válido e já cadastrado no sistema.
+<2> *password*: A senha deve ter exatamente 6 caracteres.
+
+==== UsuarioSenhaDto
+
+Objeto de requisição
+
+[%unbreakable]
+.Exemplo de Requisição: Alteração de Senha
+[source,json,linenums]
+----
+{
+    "senhaAtual": "123456", <1>
+    "novaSenha": "654321", <2>
+    "confirmaSenha": "654321" <3>
+}
+----
+<1> *senhaAtual*: O sistema validará se esta senha corresponde à senha gravada no banco de dados.
+<2> *novaSenha*: Deve ser diferente da senha atual e possuir exatamente 6 caracteres.
+<3> *confirmaSenha*: Deve ser idêntica ao campo novaSenha. Caso contrário, a API retornará um erro de validação.
+
+==== ClienteResponseDto
+
+Objeto de resposta
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+    "id": 1, <1>
+    "nome": "Marcio Ballem", <2>
+    "cpf": "12345678901" <3>
+}
+----
+<1> *id*: O identificador numérico (`Long`) único deste cliente.
+<2> *nome*: Nome completo conforme cadastrado.
+<3> *cpf*: Documento único; O sistema retorna apenas os 11 dígitos numéricos.
+
+==== ClienteCreateDto
+
+Objeto de requisição
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+    "nome": "João da Silva", <1>
+    "cpf": "12345678901" <2>
+}
+----
+<1> *nome*: Deve ser preenchido com o nome completo do usuário.
+<2> *cpf*: Deve conter exatamente 11 dígitos. O sistema rejeitará strings com pontos, traços ou tamanho incorreto.
+
+==== ClienteVagaProjection
+
+Objeto de resposta retornado como elemento de `content` em `PageableClienteVagaDto`.
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+    "placa": "ABC-1234",
+    "marca": "Fiat",
+    "modelo": "Uno",
+    "cor": "Branco",
+    "clienteCpf": "12345678901",
+    "recibo": "20260327-163000", <1>
+    "dataEntrada": "2026-03-27T10:00:00",
+    "dataSaida": "2026-03-27T12:00:00",
+    "vagaCodigo": "A-01",
+    "valor": 25.0, <2>
+    "desconto": 2.5 <3>
+}
+----
+<1> *recibo*: Identificador único da estadia, útil para buscas rápidas.
+<2> *total*: Valor gerado pelo tempo estacionado entre check-in e check-out. Este valor *não* contém o desconto aplicado.
+<3> *desconto*: Valor subtraído do total com base na fidelidade do cliente.
+
+==== PageableClienteVagaDto
+
+Objeto de resposta
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+    "content": [ <1>
+        {
+            "placa": "ABC-1234",
+            "recibo": "20260327-163000",
+            "valor": 25.0
+        }
+    ],
+    "first": true, <2>
+    "last": false, <3>
+    "size": 5, <4>
+    "totalPages": 10, <5>
+    "totalElements": 50, <6>
+    "page": 0, <7>
+    "pageElements": 5 <8>
+}
+----
+<1> *content*: Array contendo os dados reais dos registros. No seu front-end, este é o campo que deve ser mapeado para as linhas da tabela.
+<2> *first*: Indica se esta é a primeira página da listagem.
+<3> *last*: Indica se esta é a última página da listagem.
+<4> *size*: Quantidade de elementos solicitados por página.
+<5> *totalPages*: Quantidade total de páginas disponíveis.
+<6> *totalElements*: Quantidade total de registros no banco de dados.
+<7> *page*: Reflete o parâmetro page enviado na requisição GET.
+<8> *pageElements*: Quantidade de elementos retornados na página atual.
+
+==== ClienteProjection
+
+Objeto de resposta retornado como elemento de `content` em `PageableClienteDto`.
+
+[%unbreakable]
+[source,json,linenums]
+----
+{
+    "id": 1, <1>
+    "cpf": "12345678901", <2>
+    "nome": "João da Silva" <3>
+}
+----
+<1> *id*: Identificador do cliente.
+<2> *cpf*: CPF do cliente
+<3> *nome*: Nome completo do cliente.
+
+==== PageableClienteDto
+
+Objeto de resposta
+
+[%unbreakable]
+.Exemplo de Resposta: Listagem Paginada de Clientes
+[source,json,linenums]
+----
+{
+    "content": [ <1>
+        {
+            "id": 1,
+            "cpf": "12345678901",
+            "nome": "João da Silva"
+        }
+    ],
+    "first": true, <2>
+    "last": false, <3>
+    "size": 5, <4>
+    "totalPages": 10, <5>
+    "totalElements": 50, <6>
+    "page": 0, <7>
+    "pageElements": 5 <8>
+}
+----
+<1> *content*: Array contendo os dados reais dos registros. No seu front-end, este é o campo que deve ser mapeado para as linhas da tabela.
+<2> *first*: Indica se esta é a primeira página da listagem.
+<3> *last*: Indica se esta é a última página da listagem.
+<4> *size*: Quantidade de elementos solicitados por página.
+<5> *totalPages*: Quantidade total de páginas disponíveis.
+<6> *totalElements*: Quantidade total de registros no banco de dados.
+<7> *page*: Reflete o parâmetro page enviado na requisição GET.
+<8> *pageElements*: Quantidade de elementos retornados na página atual.
+
