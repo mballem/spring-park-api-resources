@@ -1,6 +1,6 @@
 = Spring Park API - Recursos do Curso
 Marcio Ballem <https://www.linkedin.com/in/mballem/[LinkedIn] | https://github.com/mballem[GitHub] | https://www.udemy.com/user/marcio-ballem-de-souza/[Udemy]>
-:toc: macro
+:toc: left
 :toc-title: Sumário
 :toclevels: 3
 :sectnums:
@@ -18,14 +18,14 @@ API para gestão de estacionamento de veículos, desenvolvida para o ecossistema
 ____
 <<<
 
-== 🎯 Sobre o Projeto
+== Sobre o Projeto
 Este repositório contém os recursos necessários para acompanhar o curso de Desenvolvimento de um *_Client REST_* com Spring Boot 4. 
 
 Aqui você encontrará o executável da API, documentação dos recursos e instruções de configuração.
 
 <<<
 
-== 🚀 Como Começar
+== Como Começar
 
 === Pré-requisitos e Execução da API
 
@@ -48,9 +48,11 @@ Caso a versão exibida seja inferior a `25`, o arquivo `.jar` não será executa
 
 === 2. Como Executar a API
 
--- Faça o download do arquivo `spring-park-api-x.x.jar` em:
+-- Faça o download do arquivo `api-spring-park.zip` em:
 
 [icon:download[]] **https://github.com/mballem/spring-park-api-resources/releases/tag/v1.0[Baixar API (v1.0)^]**
+
+Realize a descompactação do arquivo `.zip` no seu diretório de preferencia e localize, no diretório resultando da descompactação, o arquivo `.jar` para execução. Leia as instruções complementares na página de download.
 
 Com o terminal aberto, na pasta onde você salvou o arquivo da `.jar`, execute o seguinte comando:
 [source,bash]
@@ -76,7 +78,7 @@ Uma vez em execução, a API e sua documentação interativa estarão disponíve
 
 - Banco de Dados (H2 Console): `http://localhost:8080/h2-console`
 
-== 🔐 Credenciais de Teste
+== Credenciais de Teste
 
 Para facilitar o desenvolvimento da aplicação cliente, o arquivo executável (`.jar`) já inicializa um banco de dados com usuários pré-cadastrados. Utilize as credenciais abaixo para testar os diferentes níveis de acesso (Roles).
 
