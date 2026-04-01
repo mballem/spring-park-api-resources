@@ -31,7 +31,7 @@ Aqui você encontrará o executável da API, documentação dos recursos e instr
 
 Para que a aplicação cliente desenvolvida no curso funcione corretamente, é necessário que a API fornecida (demo-park-api-x.x.jar) esteja em execução.
 
-=== 1. Verificação do Ambiente (Java 25+)
+=== Verificação do Ambiente (Java 25+)
 Certifique-se de que você possui o JRE (Java Runtime Environment) ou JDK na versão `25+` instalada. Para verificar, abra o seu terminal (CMD, PowerShell ou Bash) e digite:
 
 [source,bash]
@@ -46,7 +46,7 @@ openjdk version "25" 2025-09-16
 [IMPORTANT]
 Caso a versão exibida seja inferior a `25`, o arquivo `.jar` não será executado. Certifique-se de atualizar seu ambiente antes de prosseguir.
 
-=== 2. Como Executar a API
+=== Como Executar a API
 
 -- Faça o download do arquivo `api-spring-park.zip` em:
 
