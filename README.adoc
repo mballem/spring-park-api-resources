@@ -74,9 +74,39 @@ Uma vez em execução, a API e sua documentação interativa estarão disponíve
 
 - URL Base da API: `http://localhost:8080`
 
-- Swagger UI (Documentação): `http://localhost:8080/swagger-ui.html`
+- Swagger UI (Documentação): `http://localhost:8080/docs-park.html`
 
 - Banco de Dados (H2 Console): `http://localhost:8080/h2-console`
+
+==== Customização do Tempo de Expiração do Token
+
+[IMPORTANT]
+====
+.🕒 Expiração do Token (JWT)
+Por padrão, a API inicializa com um tempo de expiração de **15 minutos**. Após esse período, o token torna-se inválido e uma nova autenticação será necessária.
+
+Se desejar alterar esse comportamento, você pode passar parâmetros de sistema diretamente no comando de inicialização.
+====
+
+===== Parâmetros Disponíveis
+Você pode utilizar um ou mais dos parâmetros abaixo para definir o tempo de vida do token:
+
+* `jwt.expire.minutes` -> Define a duração em **minutos**.
+* `jwt.expire.hours`   -> Define a duração em **horas**.
+* `jwt.expire.days`    -> Define a duração em **dias**.
+
+===== Exemplo de Uso
+Para alterar a expiração, utilize a flag `-D` antes do argumento `-jar`. No exemplo abaixo, reduzimos o tempo para apenas **1 minuto**:
+
+[source,bash]
+----
+java "-Djwt.expire.minutes=1" -jar demo-park-api-1.0.jar
+----
+
+[TIP]
+====
+Você pode combinar parâmetros se necessário (ex: 1 hora e 30 minutos), mas geralmente definir apenas um deles já atende à necessidade de teste do seu *Client REST*.
+====
 
 == Credenciais de Teste
 
