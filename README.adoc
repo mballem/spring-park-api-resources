@@ -978,6 +978,20 @@ Code 404:: Vaga não encontrada
 }
 ----
 
+Code 422:: Parâmetro inexistente ou mal formatado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
 Code 500:: Internal Server Error
 
 [%unbreakable]
