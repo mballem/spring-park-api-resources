@@ -1053,26 +1053,6 @@ Code 201:: Sucesso
 }
 ----
 
-Code 201:: Sucesso
-
-[%unbreakable]
-[source,json]
-----
-{
-  "placa": "string",
-  "marca": "string",
-  "modelo": "string",
-  "cor": "string",
-  "clienteCpf": "string",
-  "recibo": "string",
-  "dataEntrada": "2026-03-27T19:50:36.068Z",
-  "dataSaida": "2026-03-27T19:50:36.068Z",
-  "vagaCodigo": "string",
-  "valor": 0,
-  "desconto": 0
-}
-----
-
 Code 403:: Acesso Negado
 
 [%unbreakable]
@@ -1188,6 +1168,20 @@ Code 404:: Causas possíveis:
 
 - Número do recibo é inexistente
 - O veículo já teve o check-out registrado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 422:: Parâmetro inexistente ou mal formatado
 
 [%unbreakable]
 [source,json]
@@ -1428,6 +1422,20 @@ Code 403:: Acesso Negado
 }
 ----
 
+Code 422:: Parâmetro inexistente ou mal formatado
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
 Code 500:: Internal Server Error
 
 [%unbreakable]
@@ -1479,6 +1487,20 @@ Code 200:: Sucesso
 ----
 
 Code 404:: Número do recibo não encontrado.
+
+[%unbreakable]
+[source,json]
+----
+{
+  "path": "string",
+  "method": "string",
+  "status": 0,
+  "statusText": "string",
+  "message": "string"
+}
+----
+
+Code 422:: Parâmetro inexistente ou mal formatado
 
 [%unbreakable]
 [source,json]
