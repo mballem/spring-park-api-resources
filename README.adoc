@@ -144,6 +144,7 @@ O usuário `bruna@email.com` já possui um registro de cliente vinculado. Ao log
   "usuario": "bruna@email.com"
 }
 ----
+Para testar o recurso que localiza os detalhes de estacionamento de um cliente e a operação de check-out, antes de criar a operação de check-in, utilize o recibo `20260515-014349`. Este recibo está vinculado ao cliente `bruna@email.com`.
 ====
 
 [IMPORTANT]
